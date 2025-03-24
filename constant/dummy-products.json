@@ -1,0 +1,102 @@
+[
+    {
+        "id": 1,
+        "title": "Wireless Headphones",
+        "description": "High-quality wireless headphones with noise cancellation.",
+        "ratings": 4.5,
+        "thumbnail": "https://placehold.co/400x300",
+        "price": 120,
+        "discountPrice": 99.99,
+        "category": "Electronics"
+    },
+    {
+        "id": 2,
+        "title": "Smartphone",
+        "description": "Latest model with 128GB storage and 5G support.",
+        "ratings": 4.8,
+        "thumbnail": "https://placehold.co/400x300",
+        "price": 899,
+        "discountPrice": 799,
+        "category": "Electronics"
+    },
+    {
+        "id": 3,
+        "title": "Gaming Laptop",
+        "description": "Powerful gaming laptop with RTX 3060 and 16GB RAM.",
+        "ratings": 4.7,
+        "thumbnail": "https://placehold.co/400x300",
+        "price": 1500,
+        "discountPrice": null,
+        "category": "Computers"
+    },
+    {
+        "id": 4,
+        "title": "Mechanical Keyboard",
+        "description": "RGB mechanical keyboard with customizable switches.",
+        "ratings": 4.6,
+        "thumbnail": "https://placehold.co/400x300",
+        "price": 80,
+        "discountPrice": 69.99,
+        "category": "Accessories"
+    },
+    {
+        "id": 5,
+        "title": "Smartwatch",
+        "description": "Fitness tracking smartwatch with heart rate monitoring.",
+        "ratings": 4.2,
+        "thumbnail": "https://placehold.co/400x300",
+        "price": 199.99,
+        "discountPrice": 179.99,
+        "category": "Wearables"
+    },
+    {
+        "id": 6,
+        "title": "Bluetooth Speaker",
+        "description": "Portable Bluetooth speaker with deep bass and long battery life.",
+        "ratings": 4.4,
+        "thumbnail": "https://placehold.co/400x300",
+        "price": 60,
+        "discountPrice": 49.99,
+        "category": "Audio"
+    },
+    {
+        "id": 7,
+        "title": "Backpack",
+        "description": "Water-resistant laptop backpack with multiple compartments.",
+        "ratings": 4.1,
+        "thumbnail": "https://placehold.co/400x300",
+        "price": 50,
+        "discountPrice": 39.99,
+        "category": "Travel"
+    },
+    {
+        "id": 8,
+        "title": "Running Shoes",
+        "description": "Lightweight running shoes with superior comfort and grip.",
+        "ratings": 4.3,
+        "thumbnail": "https://placehold.co/400x300",
+        "price": 120,
+        "discountPrice": 89.99,
+        "category": "Sports"
+    },
+    {
+        "id": 9,
+        "title": "Wireless Mouse",
+        "description": "Ergonomic wireless mouse with long battery life.",
+        "ratings": 4.5,
+        "thumbnail": "https://placehold.co/400x300",
+        "price": 40,
+        "discountPrice": 29.99,
+        "category": "Accessories"
+    },
+    {
+        "id": 10,
+        "title": "LED Monitor",
+        "description": "27-inch 144Hz gaming monitor with ultra-thin bezels.",
+        "ratings": 4.8,
+        "thumbnail": "https://placehold.co/400x300",
+        "price": 320,
+        "discountPrice": 279.99,
+        "category": "Computers"
+    }
+]

@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const { db, bucket } = require("../libs/firebase");
-const { isAuthenticated } = require("../libs/auth");
+const { isAuthenticated, optionalAuthentication } = require("../libs/auth");
+const { getProductAdditionalData, addClick } = require("../libs/helper");
 const { uploadFile } = require("../libs/utils");
 
 router.route("/")
-    .get(async (req, res) => {
+    .get(optionalAuthentication, async (req, res) => {
         const { id } = req.query;
         if (!id) return res.status(400).json({ error: "Product ID is required" });
 
@@ -14,38 +15,41 @@ router.route("/")
             const product = await productRef.get();
 
             if (!product.exists) return res.status(404).json({ error: "Product not found" });
+            const productData = product.data();
+            const additionalData = await getProductAdditionalData(id, productData.sellerId);
+            if (req.user && req.user.userId) {
+                await addClick(id, req.user.userId);
+            }
 
-            res.json(product.data());
+            return res.json({...productData, ...additionalData });
         } catch (error) {
-            res.status(500).json({ error: "Error fetching product" });
+            return res.status(500).json({ error: "Error fetching product" });
         }
     })
     .post(isAuthenticated, async (req, res) => {
-        const { title, description, price, discountPrice, thumbnail, category } = req.body;
-
-        if (!title || !description || !price || !thumbnail || !category)
-            return res.status(400).json({ error: "Missing required fields" });
+        const requiredFields = ['title', 'description', 'brandName', 'image', 'price', 'category', 'stock' ];
+        const missingField = requiredFields.find(field => !req.body[field]);
+        if (missingField) return res.status(400).json({ error: `Missing ${missingField}` });
 
         const newProductRef = db.collection("products").doc();
 
         const newProduct = {
             id: newProductRef.id,
-            title,
-            description,
-            price: parseFloat(price),
-            discountPrice: discountPrice ? parseFloat(discountPrice) : null,
-            thumbnail: await uploadFile(thumbnail, `product_${newProductRef.id}`),
-            outOfStock: false,
-            category,
-            sellerId: req.user.id,
+            title: req.body.title,
+            description: req.body.description,
+            price: parseFloat(req.body.price),
+            discountPrice: req.body.discountPrice ? parseFloat(req.body.discountPrice) : null,
+            image: await uploadFile(req.body.image, `product_${newProductRef.id}`),
+            stock: parseInt(req.body.stock) || 0,
+            brandName: req.body.brandName,
+            category: req.body.category,
+            sellerId: req.user.userId,
             timestamp: new Date(),
-            impressions: 0,
-            purchasedBy: [],
-            ratedBy: [],
+            keywords: req.body.keywords || [],
         };
 
         await newProductRef.set(newProduct);
-        return res.json({ message: "Product created" });
+        return res.status(201).json({ message: "Product created" });
     })
     .put(isAuthenticated, async (req, res) => {
         const { id, title, description, price, discountPrice, outOfStock, thumbnail } = req.body;
@@ -87,7 +91,7 @@ router.route("/")
         if (product.data().sellerId !== req.user.id)
             return res.status(403).json({ error: "Unauthorized" });
 
-        const fileRef = bucket.file(`product_pRlUCqsXqYEhLnFFYvZU`);
+        const fileRef = bucket.file(`product_${id}`);
         if (await fileRef.exists()) await fileRef.delete();
         await productRef.delete();
         return res.json({ message: "Product deleted" });

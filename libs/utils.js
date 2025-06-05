@@ -1,9 +1,7 @@
-const { bucket } = require('./firebase');
+const { bucket, db } = require('./firebase');
 
 async function uploadFile(base64File, fileName = `file_${Date.now()}`) {
-    if (!/^data:.*;base64,/.test(base64File)) {
-        throw new Error('Invalid base64 file format');
-    }
+    if (!/^data:.*;base64,/.test(base64File)) return base64File;
 
     const base64Data = base64File.split(';base64,').pop();
     const buffer = Buffer.from(base64Data, 'base64');
@@ -25,6 +23,6 @@ async function uploadFile(base64File, fileName = `file_${Date.now()}`) {
     });
 
     return signedUrl;
-}
+};
 
 module.exports = { uploadFile };

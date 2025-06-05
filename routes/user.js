@@ -12,11 +12,12 @@ if (!SECRET_KEY) throw new Error("SECRET_KEY is required");
 
 const COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+  secure: process.env.NODE_ENV === "production", // must be true in production
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // fix this!
   maxAge: 24 * 60 * 60 * 1000,
   path: "/",
 };
+
 
 const SESSION_EXPIRY = 30 * 24 * 60 * 60 * 1000;
 

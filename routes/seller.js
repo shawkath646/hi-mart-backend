@@ -45,9 +45,4 @@ router.get("/session", isAuthenticated, async (req, res) => {
     return res.json(sellerDoc.data());
 });
 
-router.get("/data", isAuthenticated, async(req, res) => {
-    const sellerProducts = await db.collection("products").where("sellerId", "==", req.user.userId).get();
-    const products = sellerProducts.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-});
-
 module.exports = router; 

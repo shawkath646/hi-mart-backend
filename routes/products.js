@@ -23,7 +23,7 @@ async function fetchProducts(query, limit, page) {
 
             return {
                 ...data,
-                ...additionalData, // includes sellerName, totalClicks, totalRatings, totalSold
+                ...additionalData,
                 description:
                     data.description?.length > 150
                         ? data.description.slice(0, 147) + "..."

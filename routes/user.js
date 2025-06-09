@@ -252,42 +252,42 @@ router.get("/login/google/callback", async (req, res) => {
 });
 
 // Facebook OAuth login
-router.post("/login/facebook", async (req, res) => {
-  try {
-    const { accessToken } = req.body;
-    if (!accessToken) return res.status(400).json({ error: "Access token required" });
+// router.post("/login/facebook", async (req, res) => {
+//   try {
+//     const { accessToken } = req.body;
+//     if (!accessToken) return res.status(400).json({ error: "Access token required" });
 
-    const response = await axios.get(
-      `https://graph.facebook.com/v12.0/me?fields=id,first_name,last_name,email,picture&access_token=${accessToken}`
-    );
+//     const response = await axios.get(
+//       `https://graph.facebook.com/v12.0/me?fields=id,first_name,last_name,email,picture&access_token=${accessToken}`
+//     );
 
-    const { email, first_name, last_name, id, picture } = response.data;
-    if (!email) return res.status(403).json({ error: "Email permission not granted" });
+//     const { email, first_name, last_name, id, picture } = response.data;
+//     if (!email) return res.status(403).json({ error: "Email permission not granted" });
 
-    const snapshot = await db.collection("users").where("email", "==", email).get();
-    if (snapshot.empty) {
-      return res.status(404).json({
-        error: "User not found",
-        signupData: {
-          email, firstName: first_name, lastName: last_name,
-          picture: picture?.data?.url
-        }
-      });
-    }
+//     const snapshot = await db.collection("users").where("email", "==", email).get();
+//     if (snapshot.empty) {
+//       return res.status(404).json({
+//         error: "User not found",
+//         signupData: {
+//           email, firstName: first_name, lastName: last_name,
+//           picture: picture?.data?.url
+//         }
+//       });
+//     }
 
-    const userDoc = snapshot.docs[0];
-    await userDoc.ref.update({
-      facebookId: id,
-      picture: picture?.data?.url || userDoc.data().picture
-    });
+//     const userDoc = snapshot.docs[0];
+//     await userDoc.ref.update({
+//       facebookId: id,
+//       picture: picture?.data?.url || userDoc.data().picture
+//     });
 
-    const userData = await handleSuccessfulLogin(res, userDoc, 'facebook');
-    return res.json({ user: userData });
-  } catch (error) {
-    console.error("Facebook login error:", error.response?.data || error.message);
-    return res.status(500).json({ error: "Internal server error" });
-  }
-});
+//     const userData = await handleSuccessfulLogin(res, userDoc, 'facebook');
+//     return res.json({ user: userData });
+//   } catch (error) {
+//     console.error("Facebook login error:", error.response?.data || error.message);
+//     return res.status(500).json({ error: "Internal server error" });
+//   }
+// });
 
 // Session endpoint
 router.get("/session", isAuthenticated, async (req, res) => {

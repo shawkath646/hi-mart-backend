@@ -31,16 +31,31 @@ router.route("/")
         const missingField = requiredFields.find(field => !req.body[field]);
         if (missingField) return res.status(400).json({ error: `Missing ${missingField}` });
 
+        const price = parseFloat(req.body.price);
+        const discountPrice = req.body.discountPrice ? parseFloat(req.body.discountPrice) : null;
+        const stock = parseInt(req.body.stock);
+
+        if (isNaN(price) || price < 0) {
+            return res.status(400).json({ error: "Invalid price value" });
+        }
+        if (discountPrice !== null && (isNaN(discountPrice) || discountPrice < 0 || discountPrice >= price)) {
+            return res.status(400).json({ error: "Invalid discount price" });
+        }
+        if (isNaN(stock) || stock < 0) {
+            return res.status(400).json({ error: "Invalid stock value" });
+        }
+
+        try {
         const newProductRef = db.collection("products").doc();
 
         const newProduct = {
             id: newProductRef.id,
             title: req.body.title,
             description: req.body.description,
-            price: parseFloat(req.body.price),
-            discountPrice: req.body.discountPrice ? parseFloat(req.body.discountPrice) : null,
+            price,
+            discountPrice,
             image: await uploadFile(req.body.image, `product_${newProductRef.id}`),
-            stock: parseInt(req.body.stock) || 0,
+            stock,
             brandName: req.body.brandName,
             category: req.body.category,
             sellerId: req.user.userId,
@@ -50,8 +65,12 @@ router.route("/")
 
         await newProductRef.set(newProduct);
         return res.status(201).json({ message: "Product created" });
+        } catch (error) {
+            return res.status(500).json({ error: "Failed to create product" });
+        }
     })
     .put(isAuthenticated, async (req, res) => {
+        try {
         const { id, title, description, price, discountPrice, outOfStock, thumbnail } = req.body;
 
         if (!id || !title || !description || !price || !thumbnail)
@@ -78,8 +97,12 @@ router.route("/")
 
         await productRef.update(updatedProduct);
         return res.json({ message: "Product updated" });
+        } catch (error) {
+            return res.status(500).json({ error: "Failed to update product" });
+        }
     })
     .delete(isAuthenticated, async (req, res) => {
+        try {
         const { id } = req.body;
         if (!id) return res.status(400).json({ error: "Product ID is required" });
 
@@ -95,6 +118,9 @@ router.route("/")
         if (await fileRef.exists()) await fileRef.delete();
         await productRef.delete();
         return res.json({ message: "Product deleted" });
+        } catch (error) {
+            return res.status(500).json({ error: "Failed to delete product" });
+        }
     });
 
 module.exports = router;

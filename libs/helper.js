@@ -19,8 +19,7 @@ const getProductAdditionalData = async (productId, sellerId) => {
             totalSold: totalSoldSnapshot.size,
             totalImpressions: totalImpressions.size
         };
-    } catch (error) {
-        console.error('Error fetching product additional data:', error);
+    } catch {
         return {
             sellerName: 'Unknown',
             totalClicks: 0,
@@ -40,9 +39,7 @@ const addImpression = async (productId, userId) => {
         if (!impressionDoc.exists) {
             await impressionRef.set({ timestamp: new Date() });
         }
-    } catch (error) {
-        console.error('Error adding impression:', error);
-    }
+    } catch {}
 };
 
 const addClick = async (productId, userId) => {
@@ -54,9 +51,7 @@ const addClick = async (productId, userId) => {
         if (!clickDoc.exists) {
             await clickRef.set({ timestamp: new Date() });
         }
-    } catch (error) {
-        console.error('Error adding click:', error);
-    }
+    } catch {}
 };
 
 module.exports = {

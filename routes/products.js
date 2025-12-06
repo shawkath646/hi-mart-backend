@@ -106,8 +106,8 @@ router.get('/discounts', async (req, res) => {
 router.get("/minisearch", async (req, res) => {
     const query = req.query.q?.toLowerCase();
 
-    if (!query || query.length < 3) {
-        return res.status(400).json({ error: "Query must be at least 3 characters long" });
+    if (!query || query.length < 2) {
+        return res.status(400).json({ error: "Query must be at least 2 characters long" });
     }
 
     try {
@@ -144,7 +144,6 @@ router.get("/minisearch", async (req, res) => {
 
         return res.json(sorted);
     } catch (error) {
-        console.error("Mini search error:", error);
         return res.status(500).json({ error: error.message });
     }
 });

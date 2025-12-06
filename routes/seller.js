@@ -4,8 +4,8 @@ const { db } = require("../libs/firebase");
 const { isAuthenticated } = require("../libs/auth");
 
 router.post("/register", isAuthenticated, async (req, res) => {
-
-    const requiredFields = ['businessName', 'businessType', 'email', 'phone', 'address', 'taxId'];
+    try {
+        const requiredFields = ['businessName', 'businessType', 'email', 'phone', 'address', 'taxId'];
     const missingField = requiredFields.find(field => !req.body[field]);
     if (missingField) return res.status(400).json({ error: `Missing ${missingField}` });
 
@@ -34,15 +34,22 @@ router.post("/register", isAuthenticated, async (req, res) => {
         isSeller: true,
     });
 
-    return res.status(201).json({ error: "Successfully registered as a seller." });
+    return res.status(201).json({ message: "Successfully registered as a seller." });
+    } catch (error) {
+        return res.status(500).json({ error: "Failed to register as seller" });
+    }
 });
 
 router.get("/session", isAuthenticated, async (req, res) => {
-    const sellerDoc = await db.collection("sellers").doc(req.user.userId).get();
-    if (!sellerDoc.exists) {
-        return res.status(404).json({ error: "Seller not found" });
+    try {
+        const sellerDoc = await db.collection("sellers").doc(req.user.userId).get();
+        if (!sellerDoc.exists) {
+            return res.status(404).json({ error: "Seller not found" });
+        }
+        return res.json(sellerDoc.data());
+    } catch (error) {
+        return res.status(500).json({ error: "Failed to fetch seller session" });
     }
-    return res.json(sellerDoc.data());
 });
 
 module.exports = router; 

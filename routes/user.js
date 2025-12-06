@@ -31,9 +31,8 @@ const getDeviceInfo = async (req) => {
   try {
     const geoRes = await axios.get(`http://ip-api.com/json/${deviceInfo.ip}`, { timeout: 1000 });
     deviceInfo.location = geoRes.data;
-  } catch (err) {
+  } catch {
     deviceInfo.location = "Unknown";
-    console.log("Geolocation lookup failed:", err.message);
   }
   return deviceInfo;
 };
@@ -105,7 +104,6 @@ router.post("/register", async (req, res) => {
 
     return res.status(201).json({ user });
   } catch (error) {
-    console.error("Registration error:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -129,7 +127,6 @@ router.post("/login", async (req, res) => {
     const userData = await handleSuccessfulLogin(res, userDoc);
     return res.json({ user: userData });
   } catch (error) {
-    console.error("Login error:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -155,7 +152,6 @@ router.post("/login/google", async (_, res) => {
 
     return res.status(200).json({ url: authUrl });
   } catch (error) {
-    console.error("Google login error:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -301,7 +297,6 @@ router.get("/session", isAuthenticated, async (req, res) => {
     const { password, googleRefreshToken, facebookAccessToken, ...safeData } = user;
     return res.json({ user: safeData });
   } catch (error) {
-    console.error("Session error:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -313,7 +308,6 @@ router.post("/logout", isAuthenticated, async (req, res) => {
     res.clearCookie("auth_token");
     return res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
-    console.error("Logout error:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 });
